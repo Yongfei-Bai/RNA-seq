@@ -718,14 +718,17 @@ anti_4.2_plot
 ggsave('anti_4.2plot.png',anti_4.2_plot,width = 8,height = 8)
 ##整体已运行完
 
+##
+library(clusterProfiler)
+library(org.Mm.eg.db)
+D10NTC_D30TOA_DEG_gene_SYMBOL<-bitr(unique(row.names(D10NTC_D30TOA_DEG)), fromType = "ENSEMBL",
+                      toType = c( "SYMBOL"),OrgDb = org.Mm.eg.db)
 
-
-
-
-
-
-
-
+D10NTC_D30TOA_DEG['ENSEMBL']<-row.names(D10NTC_D30TOA_DEG)
+D10NTC_D30TOA_DEG<-D10NTC_D30TOA_DEG[,-8]
+D10NTC_D30TOA_DEG_1<-merge(D10NTC_D30TOA_DEG,D10NTC_D30TOA_DEG_gene_SYMBOL,by='ENSEMBL',all.x=T)
+D10NTC_D30TOA_DEG_1<-na.omit(D10NTC_D30TOA_DEG_1)
+write.csv(file = 'D10NTC_D30TOA_DEG_1.csv',D10NTC_D30TOA_DEG_1,row.names = D10NTC_D30TOA_DEG_1$ ENSEMBL)
 
 
 
