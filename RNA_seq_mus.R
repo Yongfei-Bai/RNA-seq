@@ -133,7 +133,8 @@ D10NTCvsD10TOA_plot<-ggplot(D10NTC_D10TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),
+        legend.text = element_text(size=15,colour = 'black'),legend.title = element_text(size=15,colour = 'black'))
 D10NTCvsD20TOA_plot<-ggplot(D10NTC_D20TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pvalue)))+geom_point(aes(color=significant),size=2)+
   xlim(-5,5)+ylim(0,7)+labs(title="D10NTC_vs_D20TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
@@ -143,7 +144,8 @@ D10NTCvsD20TOA_plot<-ggplot(D10NTC_D20TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title = element_text(size=15,colour = 'black'))
 D10NTCvsD30TOA_plot<-ggplot(D10NTC_D30TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pvalue)))+geom_point(aes(color=significant),size=2)+
   xlim(-5,5)+ylim(0,7)+labs(title="D10NTC_vs_D30TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
@@ -153,7 +155,8 @@ D10NTCvsD30TOA_plot<-ggplot(D10NTC_D30TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title = element_text(size=15,colour = 'black'))
 D10NTCvsD35TOA_plot<-ggplot(D10NTC_D35TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pvalue)))+geom_point(aes(color=significant),size=2)+
   xlim(-5,5)+ylim(0,7)+labs(title="D10NTC_vs_D35TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
@@ -163,7 +166,8 @@ D10NTCvsD35TOA_plot<-ggplot(D10NTC_D35TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title = element_text(size=15,colour = 'black'))
 D10NTCvsD10TOA_plot
 D10NTCvsD20TOA_plot
 D10NTCvsD30TOA_plot
@@ -195,7 +199,7 @@ D10NTC_D20TOA_DEG_down<-merge(D10NTC_D20TOA_DEG_down,gene_detail,by='Gene_ID',al
 D10NTC_D30TOA_DEG_up<-merge(D10NTC_D30TOA_DEG_up,gene_detail,by='Gene_ID',all.x=T)
 D10NTC_D30TOA_DEG_down<-merge(D10NTC_D30TOA_DEG_down,gene_detail,by='Gene_ID',all.x=T)
 D10NTC_D35TOA_DEG_up<-merge(D10NTC_D35TOA_DEG_up,gene_detail,by='Gene_ID',all.x=T)
-D10NTC_D35TOA_DEG_down<-merge(D10NTC_D35TOA_DEG_up,gene_detail,by='Gene_ID',all.x=T)
+D10NTC_D35TOA_DEG_down<-merge(D10NTC_D35TOA_DEG_down,gene_detail,by='Gene_ID',all.x=T)
 #输出数据csv文件
 write.csv(D10NTC_D20TOA_DEG_up,file = 'D10NTC_D20TOA_DEG_up_gene.csv',
           row.names = D10NTC_D20TOA_DEG_up$Gene_ID)
@@ -273,6 +277,7 @@ df_1<-as.matrix(scale(expression_diff))
 diff_heatmap<-pheatmap(df_1,scale = 'row',color=col,show_rownames = F,cellwidth = 25,
                        annotation_col = group,treeheight_row = 30,cluster_cols = F)
 diff_heatmap
+
 ##GO富集
 library(clusterProfiler)
 library(org.Mm.eg.db)
@@ -283,17 +288,18 @@ row.names(down_gene_list)<-down_gene_list$Gene_ID
 GO_down_gene_all<- enrichGO(gene = down_gene_list$Gene_ID,OrgDb= org.Mm.eg.db,
                           keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
 GO_down_gene_detail<-as.data.frame(GO_down_gene_all)
-#GO富集气泡图
+#GO富集气泡图(BP)
 GO_up_gene_BP_detail<-GO_up_gene_detail[which(GO_up_gene_detail$ONTOLOGY == 'BP'),]
 GO_down_gene_BP_detail<-GO_down_gene_detail[which(GO_up_gene_detail$ONTOLOGY == 'BP'),]
 GO_up_gene_BP_detail['total']<-155
-GO_down_gene_BP_detail['total']<-245
+GO_down_gene_BP_detail['total']<-255
 GO_up_gene_BP_detail['Richfactor']<-(GO_up_gene_BP_detail$Count)/(GO_up_gene_BP_detail$total)
 GO_down_gene_BP_detail['Richfactor']<-(GO_down_gene_BP_detail$Count)/(GO_down_gene_BP_detail$total)
 GO_up_gene_BP_detail<-GO_up_gene_BP_detail[order(GO_up_gene_BP_detail$Richfactor,decreasing = T),]
 GO_down_gene_BP_detail<-GO_down_gene_BP_detail[order(GO_down_gene_BP_detail$Richfactor,decreasing = T),]
 GO_up_gene_BP_detail_top20<-GO_up_gene_BP_detail[c(1:20),]
 GO_down_gene_BP_detail_top20<-GO_down_gene_BP_detail[c(1:20),]
+write.csv(GO_up_gene_BP_detail_top20,file = 'Go_up_top20.csv',row.names = GO_up_gene_BP_detail_top20$geneID)
 library(ggplot2)
 GO_up_gene_BP_detail_top20plot<-ggplot(GO_up_gene_BP_detail_top20,aes(-1*log10(Richfactor),Description))+
   geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+labs(title="Biological Process Top20_Up")+
@@ -307,15 +313,40 @@ GO_down_gene_BP_detail_top20plot<-ggplot(GO_down_gene_BP_detail_top20,aes(-1*log
         axis.text.x = element_text(size=12,colour = 'black'))
 GO_up_gene_BP_detail_top20plot
 GO_down_gene_BP_detail_top20plot
-ggsave("GO_up_gene_BP_detail_top20plot.png",GO_up_gene_BP_detail_top20plot,width=8,height=8)
+ggsave("GO_up_gene_BP_detail_top20plot.png",GO_up_gene_BP_detail_top20plot,width=10,height=8)
 ggsave("GO_down_gene_BP_detail_top20plot.png",GO_down_gene_BP_detail_top20plot,width=8,height=8)
+##GO富集气泡图(MF)
+GO_up_gene_MF_detail<-GO_up_gene_detail[which(GO_up_gene_detail$ONTOLOGY == 'MF'),]
+GO_down_gene_MF_detail<-GO_down_gene_detail[which(GO_up_gene_detail$ONTOLOGY == 'MF'),]
+GO_up_gene_MF_detail['total']<-155
+GO_down_gene_MF_detail['total']<-253
+GO_up_gene_MF_detail['Richfactor']<-(GO_up_gene_MF_detail$Count)/(GO_up_gene_MF_detail$total)
+GO_down_gene_MF_detail['Richfactor']<-(GO_down_gene_MF_detail$Count)/(GO_down_gene_MF_detail$total)
+GO_up_gene_MF_detail<-GO_up_gene_MF_detail[order(GO_up_gene_MF_detail$Richfactor,decreasing = T),]
+GO_down_gene_MF_detail<-GO_down_gene_MF_detail[order(GO_down_gene_MF_detail$Richfactor,decreasing = T),]
+GO_up_gene_MF_detail_top20<-GO_up_gene_MF_detail[c(1:20),]
+GO_down_gene_MF_detail_top20<-GO_down_gene_MF_detail[c(1:20),]
+write.csv(GO_up_gene_BP_detail_top20,file = 'Go_up_top20.csv',row.names = GO_up_gene_BP_detail_top20$geneID)
+library(ggplot2)
+GO_up_gene_MF_detail_top20plot<-ggplot(GO_up_gene_MF_detail_top20,aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+labs(title="Molecular Function Top20_Up")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_down_gene_MF_detail_top20plot<-ggplot(GO_down_gene_BP_detail_top20,aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+labs(title="Molecular Function Top20_Down")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_up_gene_MF_detail_top20plot
+GO_down_gene_MF_detail_top20plot
+ggsave("GO_up_gene_MF_detail_top20plot.png",GO_up_gene_MF_detail_top20plot,width=10,height=8)
+ggsave("GO_down_gene_MF_detail_top20plot.png",GO_down_gene_MF_detail_top20plot,width=8,height=8)
+
 #KEGG通路富集
 library(clusterProfiler)
 library(org.Mm.eg.db)
 #EMBL编号转换
-KEGG_all_geneid<-bitr(unique(expression_diff$Gene_ID), fromType = "ENSEMBL",
-                      toType = c( "ENTREZID"),
-                      OrgDb = org.Mm.eg.db)
 KEGG_up_geneid<- bitr(unique(up_gene_list$Gene_ID), fromType = "ENSEMBL",
         toType = c( "ENTREZID"),
         OrgDb = org.Mm.eg.db)
@@ -331,11 +362,187 @@ KEGG_down_gene_all<- enrichKEGG(gene = KEGG_down_geneid$ENTREZID,organism = "mou
 KEGG_up_gene_detail<-as.data.frame(KEGG_up_gene_all)
 KEGG_down_gene_detail<-as.data.frame(KEGG_down_gene_all)
 browseKEGG(KEGG_up_gene_all,'mmu00830')
-
+##
+##分别GO富集
+library(clusterProfiler)
+library(org.Mm.eg.db)
+GO_D10NTC_D10TOA_DEG_up<- enrichGO(gene = D10NTC_D10TOA_DEG_up$id,OrgDb= org.Mm.eg.db,
+                          keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D10TOA_DEG_down<- enrichGO(gene = D10NTC_D10TOA_DEG_down$id,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D20TOA_DEG_up<- enrichGO(gene = D10NTC_D20TOA_DEG_up$Gene_ID,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D20TOA_DEG_down<- enrichGO(gene = D10NTC_D20TOA_DEG_down$Gene_ID,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D30TOA_DEG_up<- enrichGO(gene = D10NTC_D30TOA_DEG_up$Gene_ID,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D30TOA_DEG_down<- enrichGO(gene = D10NTC_D30TOA_DEG_down$Gene_ID,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D35TOA_DEG_up<- enrichGO(gene = D10NTC_D35TOA_DEG_up$Gene_ID,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D35TOA_DEG_down<- enrichGO(gene = D10NTC_D35TOA_DEG_down$Gene_ID,OrgDb= org.Mm.eg.db,
+                                   keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.05)
+GO_D10NTC_D10TOA_DEG_up_detail<-as.data.frame(GO_D10NTC_D10TOA_DEG_up)
+GO_D10NTC_D10TOA_DEG_down_detail<-as.data.frame(GO_D10NTC_D10TOA_DEG_down)
+GO_D10NTC_D20TOA_DEG_up_detail<-as.data.frame(GO_D10NTC_D20TOA_DEG_up)
+GO_D10NTC_D20TOA_DEG_down_detail<-as.data.frame(GO_D10NTC_D20TOA_DEG_down)
+GO_D10NTC_D30TOA_DEG_up_detail<-as.data.frame(GO_D10NTC_D30TOA_DEG_up)
+GO_D10NTC_D30TOA_DEG_down_detail<-as.data.frame(GO_D10NTC_D30TOA_DEG_down)
+GO_D10NTC_D35TOA_DEG_up_detail<-as.data.frame(GO_D10NTC_D35TOA_DEG_up)
+GO_D10NTC_D35TOA_DEG_down_detail<-as.data.frame(GO_D10NTC_D35TOA_DEG_down)
+GO_D10NTC_D10TOA_DEG_up_detail['total']<-ifelse(GO_D10NTC_D10TOA_DEG_up_detail$ONTOLOGY == 'BP',60, 59)
+GO_D10NTC_D20TOA_DEG_up_detail['total']<-ifelse(GO_D10NTC_D20TOA_DEG_up_detail$ONTOLOGY == 'MF',48,47)
+GO_D10NTC_D20TOA_DEG_down_detail['total']<-ifelse(GO_D10NTC_D20TOA_DEG_down_detail$ONTOLOGY == 'BP',129
+                                                  ,ifelse(GO_D10NTC_D20TOA_DEG_down_detail == 'CC',132,131))
+GO_D10NTC_D30TOA_DEG_up_detail['total']<-ifelse(GO_D10NTC_D30TOA_DEG_up_detail$ONTOLOGY == 'BP',53, 52)
+GO_D10NTC_D30TOA_DEG_down_detail['total']<-ifelse(GO_D10NTC_D30TOA_DEG_down_detail$ONTOLOGY == 'BP',101
+                                                  ,ifelse(GO_D10NTC_D30TOA_DEG_down_detail == 'CC',98,99))
+GO_D10NTC_D35TOA_DEG_up_detail['total']<-ifelse(GO_D10NTC_D35TOA_DEG_up_detail$ONTOLOGY == 'BP',29, 30)
+GO_D10NTC_D35TOA_DEG_down_detail['total']<-ifelse(GO_D10NTC_D35TOA_DEG_down_detail$ONTOLOGY == 'BP',49,36)
+GO_D10NTC_D10TOA_DEG_up_detail['Richfactor']<-GO_D10NTC_D10TOA_DEG_up_detail$Count/GO_D10NTC_D10TOA_DEG_up_detail$total
+GO_D10NTC_D20TOA_DEG_up_detail['Richfactor']<-GO_D10NTC_D20TOA_DEG_up_detail$Count/GO_D10NTC_D20TOA_DEG_up_detail$total
+GO_D10NTC_D20TOA_DEG_down_detail['Richfactor']<-GO_D10NTC_D20TOA_DEG_down_detail$Count/GO_D10NTC_D20TOA_DEG_down_detail$total
+GO_D10NTC_D30TOA_DEG_up_detail['Richfactor']<-GO_D10NTC_D30TOA_DEG_up_detail$Count/GO_D10NTC_D30TOA_DEG_up_detail$total
+GO_D10NTC_D30TOA_DEG_down_detail['Richfactor']<-GO_D10NTC_D30TOA_DEG_down_detail$Count/GO_D10NTC_D35TOA_DEG_down_detail$total
+GO_D10NTC_D35TOA_DEG_up_detail['Richfactor']<-GO_D10NTC_D35TOA_DEG_up_detail$Count/GO_D10NTC_D35TOA_DEG_up_detail$total
+GO_D10NTC_D35TOA_DEG_down_detail['Richfactor']<-GO_D10NTC_D35TOA_DEG_down_detail$Count/GO_D10NTC_D35TOA_DEG_down_detail$total
+GO_D10NTC_D10TOA_DEG_up_detail<-GO_D10NTC_D10TOA_DEG_up_detail[order(GO_D10NTC_D10TOA_DEG_up_detail$Richfactor,decreasing = T),]
+GO_D10NTC_D20TOA_DEG_up_detail<-GO_D10NTC_D20TOA_DEG_up_detail[order(GO_D10NTC_D20TOA_DEG_up_detail$Richfactor,decreasing = T),]
+GO_D10NTC_D20TOA_DEG_down_detail<-GO_D10NTC_D20TOA_DEG_down_detail[order(GO_D10NTC_D20TOA_DEG_down_detail$Richfactor,decreasing = T),]
+GO_D10NTC_D30TOA_DEG_up_detail<-GO_D10NTC_D30TOA_DEG_up_detail[order(GO_D10NTC_D30TOA_DEG_up_detail$Richfactor,decreasing = T),]
+GO_D10NTC_D30TOA_DEG_down_detail<-GO_D10NTC_D30TOA_DEG_down_detail[order(GO_D10NTC_D30TOA_DEG_down_detail$Richfactor,decreasing = T),]
+GO_D10NTC_D35TOA_DEG_up_detail<-GO_D10NTC_D35TOA_DEG_up_detail[order(GO_D10NTC_D35TOA_DEG_up_detail$Richfactor,decreasing = T),]
+GO_D10NTC_D35TOA_DEG_down_detail<-GO_D10NTC_D35TOA_DEG_up_detail[order(GO_D10NTC_D35TOA_DEG_down_detail$Richfactor,decreasing = T),]
+write.csv(file = 'GO_D10NTC_D10TOA_DEG_up_detail.csv',GO_D10NTC_D10TOA_DEG_up_detail)
+write.csv(file = 'GO_D10NTC_D20TOA_DEG_up_detail.csv',GO_D10NTC_D20TOA_DEG_up_detail)
+write.csv(file = 'GO_D10NTC_D30TOA_DEG_up_detail.csv',GO_D10NTC_D30TOA_DEG_up_detail)
+write.csv(file = 'GO_D10NTC_D35TOA_DEG_up_detail.csv',GO_D10NTC_D35TOA_DEG_up_detail)
+#GO柱状图汇总
+library(ggplot2)
+GO_D10NTC_D10TOA_DEG_up_detail_plot<-ggplot(GO_D10NTC_D10TOA_DEG_up_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=4,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')+theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D10TOA_DEG_up_detail_plot
+GO_D10NTC_D20TOA_DEG_up_detail_plot<-ggplot(GO_D10NTC_D20TOA_DEG_up_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=5,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D20TOA_DEG_up_detail_plot
+GO_D10NTC_D20TOA_DEG_down_detail_plot<-ggplot(GO_D10NTC_D20TOA_DEG_down_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=3,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')+theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D20TOA_DEG_down_detail_plot
+GO_D10NTC_D30TOA_DEG_up_detail_plot<-ggplot(GO_D10NTC_D30TOA_DEG_up_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=5,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')+
+  theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D30TOA_DEG_up_detail_plot
+GO_D10NTC_D30TOA_DEG_down_detail_plot<-ggplot(GO_D10NTC_D30TOA_DEG_down_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=3,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')+theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D30TOA_DEG_down_detail_plot
+GO_D10NTC_D35TOA_DEG_up_detail_plot<-ggplot(GO_D10NTC_D35TOA_DEG_up_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=5,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')+theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D35TOA_DEG_up_detail_plot
+GO_D10NTC_D35TOA_DEG_down_detail_plot<-ggplot(GO_D10NTC_D35TOA_DEG_down_detail,aes(x=ID,y=Count,fill=pvalue))+
+  geom_bar(stat ="identity",width = 0.8,position = "dodge")+geom_text(aes(label=Count),size=5,vjust= -0.5)+
+  ylab('Gene Count')+xlab('GO ID')+theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size= 12),
+        axis.title.x=element_text(size=15),axis.title.y=element_text(size=15),
+        axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=8,colour = 'black',angle = 90),legend.text = element_text(size=13,colour = 'black'))
+GO_D10NTC_D35TOA_DEG_down_detail_plot
+ggsave('GO_D10NTC_D10TOA_up.tiff',GO_D10NTC_D10TOA_DEG_up_detail_plot,height = 6,width = 8)
+ggsave('GO_D10NTC_D20TOA_up.tiff',GO_D10NTC_D20TOA_DEG_up_detail_plot,height = 6,width = 8)
+ggsave('GO_D10NTC_D20TOA_down.tiff',GO_D10NTC_D20TOA_DEG_down_detail_plot,height = 6,width = 12)
+ggsave('GO_D10NTC_D30TOA_up.tiff',GO_D10NTC_D30TOA_DEG_up_detail_plot,height = 6,width = 8)
+ggsave('GO_D10NTC_D30TOA_down.tiff',GO_D10NTC_D30TOA_DEG_down_detail_plot,height = 6,width = 12)
+ggsave('GO_D10NTC_D35TOA_up.tiff',GO_D10NTC_D35TOA_DEG_up_detail_plot,height = 6,width = 8)
+ggsave('GO_D10NTC_D35TOA_down.tiff',GO_D10NTC_D35TOA_DEG_down_detail_plot,height = 6,width = 8)
+#GO气泡图汇总
+library(ggplot2)
+GO_D10NTC_D10TOA_DEG_up_top20plot<-ggplot(GO_D10NTC_D10TOA_DEG_up_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D10TOA_DEG_up_top20plot
+GO_D10NTC_D20TOA_DEG_up_top20plot<-ggplot(GO_D10NTC_D20TOA_DEG_up_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D20TOA_DEG_up_top20plot
+GO_D10NTC_D20TOA_DEG_down_top20plot<-ggplot(GO_D10NTC_D20TOA_DEG_down_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D20TOA_DEG_down_top20plot
+GO_D10NTC_D30TOA_DEG_up_top20plot<-ggplot(GO_D10NTC_D30TOA_DEG_up_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D30TOA_DEG_up_top20plot
+GO_D10NTC_D30TOA_DEG_down_top20plot<-ggplot(GO_D10NTC_D30TOA_DEG_down_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D30TOA_DEG_down_top20plot
+GO_D10NTC_D35TOA_DEG_up_top20plot<-ggplot(GO_D10NTC_D35TOA_DEG_up_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D35TOA_DEG_up_top20plot
+GO_D10NTC_D35TOA_DEG_down_top20plot<-ggplot(GO_D10NTC_D35TOA_DEG_down_detail[c(1:20),],aes(-1*log10(Richfactor),Description))+
+  geom_point(aes(size=Count,color= -1*log10(pvalue)))+scale_color_gradient(low = "blue",high = "red")+
+  theme(plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=12),axis.title.y=element_text(size=12),axis.text.y= element_text(size=12,colour = 'black'),
+        axis.text.x = element_text(size=12,colour = 'black'))
+GO_D10NTC_D35TOA_DEG_down_top20plot
+ggsave('GO_D10NTC_D10TOA_DEG_up_top20plot.tiff',GO_D10NTC_D10TOA_DEG_up_top20plot,width = 12,height = 8)
+ggsave('GO_D10NTC_D20TOA_DEG_up_top20plot.tiff',GO_D10NTC_D20TOA_DEG_up_top20plot,width = 10,height = 8)
+ggsave('GO_D10NTC_D20TOA_DEG_down_top20plot.tiff',GO_D10NTC_D20TOA_DEG_down_top20plot,width = 8,height = 8)
+ggsave('GO_D10NTC_D30TOA_DEG_up_top20plot.tiff',GO_D10NTC_D30TOA_DEG_up_top20plot,width = 10,height = 8)
+ggsave('GO_D10NTC_D30TOA_DEG_down_top20plot.tiff',GO_D10NTC_D30TOA_DEG_down_top20plot,width = 8,height = 8)
+ggsave('GO_D10NTC_D35TOA_DEG_up_top20plot.tiff',GO_D10NTC_D35TOA_DEG_up_top20plot,width = 10,height = 8)
+ggsave('GO_D10NTC_D35TOA_DEG_down_top20plot.tiff',GO_D10NTC_D35TOA_DEG_down_top20plot,width = 10,height = 8)
 ##趋势分析
 ##分析anti表中数据
+anti<-read.delim('anti.txt')
+library(clusterProfiler)
+library(org.Mm.eg.db)
+anti<-bitr(unique(anti$Gene_ID), fromType = "ENSEMBL",toType = c( "SYMBOL"),OrgDb = org.Mm.eg.db)
+anti['Gene_ID']<-anti$ENSEMBL
 anti_1<-merge(anti,expression_test_fpkm,by = 'Gene_ID',all.x = T)
-anti_1<-anti_1[,-3]
+anti_1<-anti_1[,-2]
 anti_1['D10NTC_mean']<-apply(anti_1[,c(3:5)], 1, mean)
 anti_1['D10TOA_mean']<-apply(anti_1[,c(6:8)], 1, mean)
 anti_1['D20TOA_mean']<-apply(anti_1[,c(9:11)], 1, mean)
@@ -347,12 +554,14 @@ anti_1['D20TOA']<-log2(anti_1$D20TOA_mean/anti_1$D10NTC_mean)
 anti_1['D30TOA']<-log2(anti_1$D30TOA_mean/anti_1$D10NTC_mean)
 anti_1['D35TOA']<-log2(anti_1$D35TOA_mean/anti_1$D10NTC_mean)
 anti_2<-anti_1[,-c(1,3:22)]
+anti_2<-anti_2[order(anti_2$D10TOA,decreasing = T),]
 library(reshape2)
 anti_2.1<-melt(anti_2,variable.name = 'Group',value.name = 'rate')
+anti_2.1['label']<-ifelse(anti_2.1$Group == 'D35TOA',anti_2$SYMBOL,'')
 library(ggplot2)
-anti_2.1_plot<-ggplot(anti_2.1,aes(x=Group,y=rate,colour=Name,group=Name))+geom_line()+
+anti_2.1_plot<-ggplot(anti_2.1,aes(x=Group,y=rate,colour=SYMBOL,group=SYMBOL))+geom_line()+
   geom_point()+geom_hline(yintercept=0,linetype=2,col="black")+
-  labs(title="Antimicrobial peptide gene plot",x='Group',y='log2(V1/V0)')+
+  labs(title="Antimicrobial peptide gene plot",x='Group',y='log2(V1/V0)')+geom_text(aes(label=label),size=3,vjust=1)+
   theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
@@ -361,22 +570,35 @@ anti_2.1_plot<-ggplot(anti_2.1,aes(x=Group,y=rate,colour=Name,group=Name))+geom_
         legend.text =element_text(size=11,colour = 'black') )
 anti_2.1_plot
 ggsave('anti_2plot.png',anti_2.1_plot,width = 8,height = 8)
-#正趋势4基因折线图
-anti_2.2<-anti_2[c(6,8:9,11),]
+#正趋势基因折线图
+anti2.2<-anti_2
+anti2.2['stat']<-ifelse(anti2.2$D10TOA >0, 'up','NA')
+p<-grep('NA',anti2.2$stat)
+anti2.2<-anti2.2[-p,]
 library(reshape2)
-anti_2.2<-melt(anti_2.2,variable.name = 'Group',value.name = 'rate')
+anti2.2<-melt(anti2.2,variable.name = 'Group',value.name = 'rate')
+anti2.2['label']<-ifelse(anti2.2$Group == 'D35TOA',anti2.2$SYMBOL, '')
 library(ggplot2)
-anti_2.2_plot<-ggplot(anti_2.2,aes(x=Group,y=rate,colour=Name,group=Name))+geom_line()+
+anti2.2_plot<-ggplot(anti2.2,aes(x=Group,y=rate,colour=SYMBOL,group=SYMBOL))+geom_line()+
   geom_point()+geom_hline(yintercept=0,linetype=2,col="black")+
-  labs(title="Antimicrobial peptide gene plot",x='Group',y='log2(V1/V0)')+
+  labs(title="Antimicrobial peptide gene plot",x='Group',y=expression(log[2](Fold-Change)))+geom_text(aes(label = label),size=3,vjust=1)+
   theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
         axis.text.x = element_text(size=15,colour = 'black'),legend.title = element_text('Antimicrobial peptide gene'),
         legend.text =element_text(size=11,colour = 'black') )
-anti_2.2_plot
-ggsave('anti_2.1plot.png',anti_2.2_plot,width = 8,height = 8)
+anti2.2_plot
+ggsave('anti_2.2plot.png',anti2.2_plot,width = 8,height = 8)
+
+anti_3<-anti_2
+row.names(anti_3)<-anti_3$SYMBOL
+anti_3<-anti_3[,-1]
+anti_3.1<-as.matrix(anti_3)
+library(pheatmap)
+anti_heatmap<-pheatmap(anti_3,cutree_rows = 6,cluster_cols = F)
+anti_heatmap
+
 ##
 ##暂时完成
 ##
@@ -457,7 +679,7 @@ D10PBS_D35TOA_DEG['significant']<-ifelse(
 #ggplot2火山图可视化
 library(ggplot2)
 D10PBSvsD10TOA_plot<-ggplot(D10PBS_D10TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pval)))+geom_point(aes(color=significant),size=2)+
-  xlim(-5,5)+ylim(0,7)+labs(title="D10PBS_vs_D10TOA Volcano Plot",
+  xlim(-5,5)+ylim(0,7)+labs(title="D10NTC_vs_D10TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
   scale_color_manual(values =c("blue",'gray','red'))+geom_hline(yintercept=1.3,linetype=2,col="black")+
   geom_vline(xintercept=c(-1,1),linetype=2,col="black")+
@@ -465,7 +687,8 @@ D10PBSvsD10TOA_plot<-ggplot(D10PBS_D10TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),
+        legend.text = element_text(size=15,colour = 'black'),legend.title = element_text(size=15,colour = 'black'))
 D10PBSvsD20TOA_plot<-ggplot(D10PBS_D20TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pvalue)))+geom_point(aes(color=significant),size=2)+
   xlim(-5,5)+ylim(0,7)+labs(title="D10PBS_vs_D20TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
@@ -475,7 +698,8 @@ D10PBSvsD20TOA_plot<-ggplot(D10PBS_D20TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title = element_text(size=15,colour = 'black'))
 D10PBSvsD30TOA_plot<-ggplot(D10PBS_D30TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pvalue)))+geom_point(aes(color=significant),size=2)+
   xlim(-5,5)+ylim(0,7)+labs(title="D10PBS_vs_D30TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
@@ -485,7 +709,8 @@ D10PBSvsD30TOA_plot<-ggplot(D10PBS_D30TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title = element_text(size=15,colour = 'black'))
 D10PBSvsD35TOA_plot<-ggplot(D10PBS_D35TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pvalue)))+geom_point(aes(color=significant),size=2)+
   xlim(-5,5)+ylim(0,7)+labs(title="D10PBS_vs_D35TOA Volcano Plot",
                             x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
@@ -495,7 +720,8 @@ D10PBSvsD35TOA_plot<-ggplot(D10PBS_D35TOA_DEG,aes(x=log2FoldChange,y=-1*log10(pv
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title = element_text(size=15,colour = 'black'))
 D10PBSvsD10TOA_plot
 D10PBSvsD20TOA_plot
 D10PBSvsD30TOA_plot
@@ -552,7 +778,8 @@ diff.stat.plot<-ggplot(detail_2,aes(x=Group,y=Count,fill=Type))+
         legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=12),
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
-        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=13,colour = 'black'))
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text = element_text(size=15,colour = 'black'),
+        legend.title =element_text(size = 15,color = 'black') )
 diff.stat.plot
 ggsave('diff_stat.png',diff.stat.plot,width = 8,height = 8)
 #查找4组相同上升，下降基因(UpSetR)
@@ -623,8 +850,8 @@ GO_down_gene_all_PBS<- enrichGO(gene = down_gene_list_PBS$Gene_ID,OrgDb= org.Mm.
                             keyType= 'ENSEMBL',ont= "ALL",pAdjustMethod = "BH",pvalueCutoff  = 0.1)
 GO_down_gene_detail_PBS<-as.data.frame(GO_down_gene_all_PBS)
 #GO富集气泡图
-GO_up_gene_BP_detail_PBS<-GO_up_gene_detail_PBS[which(GO_up_gene_BP_detail_PBS$ONTOLOGY == 'BP'),]
-GO_down_gene_BP_detail_PBS<-GO_down_gene_detail_PBS[which(GO_down_gene_BP_detail_PBS$ONTOLOGY == 'BP'),]
+GO_up_gene_BP_detail_PBS<-GO_up_gene_detail_PBS[which(GO_up_gene_detail_PBS$ONTOLOGY == 'BP'),]
+GO_down_gene_BP_detail_PBS<-GO_down_gene_detail_PBS[which(GO_down_gene_detail_PBS$ONTOLOGY == 'BP'),]
 GO_up_gene_BP_detail_PBS['total']<-498
 GO_down_gene_BP_detail_PBS['total']<-807
 GO_up_gene_BP_detail_PBS['Richfactor']<-(GO_up_gene_BP_detail_PBS$Count)/(GO_up_gene_BP_detail_PBS$total)
@@ -646,7 +873,7 @@ GO_down_gene_BP_detail_top20_PBS_plot<-ggplot(GO_down_gene_BP_detail_top20_PBS,a
         axis.text.x = element_text(size=12,colour = 'black'))
 GO_up_gene_BP_detail_top20_PBS_plot
 GO_down_gene_BP_detail_top20_PBS_plot
-ggsave("GO_up_gene_BP_detail_top20_PBS_plot.png",GO_up_gene_BP_detail_top20_PBS_plot,width=8,height=8)
+ggsave("GO_up_gene_BP_detail_top20_PBS_plot.png",GO_up_gene_BP_detail_top20_PBS_plot,width=15,height=8)
 ggsave("GO_down_gene_BP_detail_top20_PBS_plot.png",GO_down_gene_BP_detail_top20_PBS_plot,width=8,height=8)
 #KEGG通路富集
 library(clusterProfiler)
@@ -730,5 +957,70 @@ D10NTC_D30TOA_DEG_1<-merge(D10NTC_D30TOA_DEG,D10NTC_D30TOA_DEG_gene_SYMBOL,by='E
 D10NTC_D30TOA_DEG_1<-na.omit(D10NTC_D30TOA_DEG_1)
 write.csv(file = 'D10NTC_D30TOA_DEG_1.csv',D10NTC_D30TOA_DEG_1,row.names = D10NTC_D30TOA_DEG_1$ ENSEMBL)
 
+##qPCR结果趋势图
+qPCR_data<-read.delim('qPCR_data.txt')
+qPCR_data['Defa39_gene']<-log2(apply(qPCR_data[,c(2:4)],1,mean))
+qPCR_data['Defa35_gene']<-log2(apply(qPCR_data[,c(5:7)],1,mean))
+qPCR_data['Defa38_gene']<-log2(apply(qPCR_data[,c(8:10)],1,mean))
+qPCR_data['Reg1_gene']<-log2(apply(qPCR_data[,c(11:13)],1,mean))
+qPCR_data['Reg3a_gene']<-log2(apply(qPCR_data[,c(14:16)],1,mean))
+qPCR_data<-qPCR_data[,c(1,17:21)]
+library(reshape2)
+qPCR_data_1<-melt(qPCR_data,variable.name = 'Group',value.name = 'Rate')
+library(ggplot2)
+qPCR_data_plot<-ggplot(qPCR_data_1,aes(x=Name,y=Rate,colour=Group,group=Group))+geom_line()+
+  geom_point()+geom_hline(yintercept=0,linetype=2,col="black")+
+  labs(title="Antimicrobial peptide qPCR result",x='',y=expression(log[2] (Fold-Change)))+
+  theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=15),
+        axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text =element_text(size=13,colour = 'black'),
+        legend.title =element_text(size = 13,color = 'black')  )
+qPCR_data_plot
+qPCR_data_2<-melt(qPCR_data[,-5],variable.name = 'Group',value.name = 'Rate')
+library(ggplot2)
+qPCR_data_plot_1<-ggplot(qPCR_data_2,aes(x=Name,y=Rate,colour=Group,group=Group))+geom_line()+
+  geom_point()+geom_hline(yintercept=0,linetype=2,col="black")+
+  labs(title="Antimicrobial peptide qPCR result",x='',y=expression(log[2] (Fold-Change)))+
+  theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=15),
+        axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=15,colour = 'black'),legend.text =element_text(size=13,colour = 'black'),
+        legend.title =element_text(size = 13,color = 'black')  )
+qPCR_data_plot_1
+ggsave('qPCR_data_plot.tiff',qPCR_data_plot,width = 8,height = 8)
+ggsave('qPCR_data_plot_1.tiff',qPCR_data_plot_1,width = 8,height = 8)
+
+##测试
+tight_protein<-read.delim('tight_protein.txt')
+tight_protein<-merge(tight_protein,expression_test_fpkm,by = 'Gene_ID',all.x = T)
+tight_protein<-tight_protein[,-2]
+tight_protein['D10NTC_mean']<-apply(tight_protein[,c(2:4)], 1, mean)
+tight_protein['D10TOA_mean']<-apply(tight_protein[,c(5:7)], 1, mean)
+tight_protein['D20TOA_mean']<-apply(tight_protein[,c(8:10)], 1, mean)
+tight_protein['D30TOA_mean']<-apply(tight_protein[,c(11:13)], 1, mean)
+tight_protein['D35TOA_mean']<-apply(tight_protein[,c(14:16)], 1, mean)
+tight_protein['D10NTC']<-0
+tight_protein['D10TOA']<-log2(tight_protein$D10TOA_mean/tight_protein$D10NTC_mean)
+tight_protein['D20TOA']<-log2(tight_protein$D20TOA_mean/tight_protein$D10NTC_mean)
+tight_protein['D30TOA']<-log2(tight_protein$D30TOA_mean/tight_protein$D10NTC_mean)
+tight_protein['D35TOA']<-log2(tight_protein$D35TOA_mean/tight_protein$D10NTC_mean)
+tight_protein<-tight_protein[,c(1,22:26)]
+library(reshape2)
+tight_protein_1<-melt(tight_protein,variable.name = 'Group',value.name = 'rate')
+library(ggplot2)
+tight_plot<-ggplot(tight_protein_1,aes(x=Group,y=rate,colour=Gene_ID,group=Gene_ID))+geom_line()+
+  geom_point()+geom_hline(yintercept=0,linetype=2,col="black")+
+  labs(x='Group',y='log2(V1/V0)')+
+  theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+        legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
+        axis.title.x=element_text(size=15),
+        axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
+        axis.text.x = element_text(size=15,colour = 'black'),legend.title = element_text('Antimicrobial peptide gene'),
+        legend.text =element_text(size=11,colour = 'black') )
+tight_plot
+ggsave('tight_plot.png',tight_plot,width = 8,height = 8)
 
 
