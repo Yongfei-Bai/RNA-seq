@@ -417,6 +417,9 @@ write.csv(file = 'GO_D10NTC_D10TOA_DEG_up_detail.csv',GO_D10NTC_D10TOA_DEG_up_de
 write.csv(file = 'GO_D10NTC_D20TOA_DEG_up_detail.csv',GO_D10NTC_D20TOA_DEG_up_detail)
 write.csv(file = 'GO_D10NTC_D30TOA_DEG_up_detail.csv',GO_D10NTC_D30TOA_DEG_up_detail)
 write.csv(file = 'GO_D10NTC_D35TOA_DEG_up_detail.csv',GO_D10NTC_D35TOA_DEG_up_detail)
+write.csv(file = 'GO_D10NTC_D20TOA_DEG_down_detail.csv',GO_D10NTC_D20TOA_DEG_down_detail)
+write.csv(file = 'GO_D10NTC_D30TOA_DEG_down_detail.csv',GO_D10NTC_D30TOA_DEG_down_detail)
+write.csv(file = 'GO_D10NTC_D35TOA_DEG_down_detail.csv',GO_D10NTC_D35TOA_DEG_down_detail)
 #GO柱状图汇总
 library(ggplot2)
 GO_D10NTC_D10TOA_DEG_up_detail_plot<-ggplot(GO_D10NTC_D10TOA_DEG_up_detail,aes(x=ID,y=Count,fill=pvalue))+
@@ -976,11 +979,20 @@ qPCR_data_plot<-ggplot(qPCR_data_1,aes(x=Name,y=Rate,colour=Group,group=Group))+
         axis.title.x=element_text(size=15),
         axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
         axis.text.x = element_text(size=15,colour = 'black'),legend.text =element_text(size=13,colour = 'black'),
-        legend.title =element_text(size = 13,color = 'black')  )
+        legend.title =element_text(size = 13,color = 'black') )
 qPCR_data_plot
-qPCR_data_2<-melt(qPCR_data[,-5],variable.name = 'Group',value.name = 'Rate')
+
+qPCR_data_2<-read.delim('qPCR_data_1.txt')
+qPCR_data_2['Defa39_gene']<-log2(apply(qPCR_data_2[,c(2:4)],1,mean))
+qPCR_data_2['Defa35_gene']<-log2(apply(qPCR_data_2[,c(5:7)],1,mean))
+qPCR_data_2['Defa38_gene']<-log2(apply(qPCR_data_2[,c(8:10)],1,mean))
+qPCR_data_2['Reg1_gene']<-log2(apply(qPCR_data_2[,c(11:13)],1,mean))
+qPCR_data_2['Reg3a_gene']<-log2(apply(qPCR_data_2[,c(14:16)],1,mean))
+qPCR_data_2<-qPCR_data_2[,c(1,17:21)]
+qPCR_data_3<-melt(qPCR_data_2[,-5],variable.name = 'Group',value.name = 'Rate')
 library(ggplot2)
-qPCR_data_plot_1<-ggplot(qPCR_data_2,aes(x=Name,y=Rate,colour=Group,group=Group))+geom_line()+
+qPCR_data_3$Name<-factor(qPCR_data_3$Name,levels = c('Mock','D10TOA','D20TOA','D30TOA','D35TOA'))
+qPCR_data_plot_1<-ggplot(qPCR_data_3,aes(x=Name,y=Rate,colour=Group,group=Group))+geom_line(stat = 'identity')+
   geom_point()+geom_hline(yintercept=0,linetype=2,col="black")+
   labs(title="Antimicrobial peptide qPCR result",x='',y=expression(log[2] (Fold-Change)))+
   theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
@@ -1022,5 +1034,54 @@ tight_plot<-ggplot(tight_protein_1,aes(x=Group,y=rate,colour=Gene_ID,group=Gene_
         legend.text =element_text(size=11,colour = 'black') )
 tight_plot
 ggsave('tight_plot.png',tight_plot,width = 8,height = 8)
+
+
+###建立Deseq2流程的function函数
+
+Deseq_method<-function(data,n,group1,group2){
+  a<-factor(c(rep("group1",n),rep("group2",n)), levels = c("group1","group2"))
+  b<-data.frame(row.names = colnames(data),a)
+  require(DESeq2)
+  dds<- DESeqDataSetFromMatrix(data, b, design= ~ a)
+  dds<-DESeq(dds)
+  res<- na.omit(results(dds, contrast=c("a", "group2", "group1")))
+  res_1<-as.data.frame(res)
+  return(res_1)
+}
+###建立火山图的function函数
+volcano_plot<-function(data){
+  data['significant']<-ifelse(data$pval < 0.05 & data$log2FoldChange >1,"up",
+                               ifelse(data$pval < 0.05 & data$log2FoldChange < -1,"down","no"))
+  require(ggplot2)
+  plot<-ggplot(data,aes(x=log2FoldChange,y=-1*log10(pvalue)))+
+    geom_point(aes(color=significant),size=2)+
+    xlim(-5,5)+ylim(0,7)+labs(title="Volcano Plot",x=expression(log[2](FC)),y=expression(-log[10](p-value)))+
+    scale_color_manual(values =c("blue",'gray','red'))+
+    geom_hline(yintercept=1.3,linetype=2,col="black")+
+    geom_vline(xintercept=c(-1,1),linetype=2,col="black")+
+    theme(panel.background = element_rect(color = 'black', fill = 'transparent'), 
+          legend.key = element_rect(fill = 'transparent'),plot.title = element_text(hjust = 0.5,size=15),
+          axis.title.x=element_text(size=15),
+          axis.title.y=element_text(size=15),axis.text.y= element_text(size=15,colour = 'black'),
+          axis.text.x = element_text(size=15,colour = 'black'),
+          legend.text = element_text(size=15,colour = 'black'),legend.title = element_text(size=15,colour = 'black'))
+  return(plot)
+  }
+
+test<-volcano_plot(D10NTC_D20TOA_DEG)
+test
+expression_NTC<-expression_all[,c(3,5,7,21,23,25,39,41,43)]
+expression_NTC['D10NTC_mean']<-apply(expression_NTC[,c(1:3)], 1, mean)
+expression_NTC['D20NTC_mean']<-apply(expression_NTC[,c(4:6)], 1, mean)
+expression_NTC['D30NTC_mean']<-apply(expression_NTC[,c(7:9)], 1, mean)
+expression_NTC<-expression_NTC[,-c(1:9)]
+expression_NTC<-expression_NTC[which(rowMeans(expression_NTC)>0),]
+write.csv(file = 'expression_NTC.csv',expression_NTC)
+
+
+
+
+
+
 
 
